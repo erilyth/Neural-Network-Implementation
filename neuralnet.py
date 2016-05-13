@@ -12,17 +12,37 @@
 
 import numpy as np
 
+
 #To keep the randomness the same each time we run the code
 #This can be removed if needed
 np.random.seed(1)
+
 
 def sigmoid(x):
     '''Keeps the output in the range of -1 to 1 with a smooth transition'''
     return 1 / (1 + np.exp(-x))
 
+
 def sigmoid_derivative(x):
     '''Derivative of the sigmoid function'''
     return x * (1 - x)
+
+
+def generate_network(network_shape):
+	'''
+	Given a shape of the network, generate randomized weight matrices for the network
+	'''
+	weight_arrays = []
+	for i in range(0, len(network_shape) - 1):
+	    cur_idx = i
+	    next_idx = i + 1
+	    #Rows correspond to next set of nodes
+	    #Columns correspond to current set of nodes
+	    weight_array = 2*np.random.rand(network_shape[next_idx], network_shape[cur_idx]) - 1
+	    weight_arrays.append(weight_array)
+
+	return weight_arrays
+
 
 def run_network(input, network_shape, network_weights):
     '''
@@ -43,7 +63,17 @@ def run_network(input, network_shape, network_weights):
     print current_output
 
 
-#For contributions of weights in backward propogation we use transpose instead of inverse
+def train_network_main(input, output, network_shape, network_weights):
+	'''
+	Take untrained weights and return trained weights for the neural network
+	'''
+	#Train the network multiple times to make it more accurate
+	weight_arrays = network_weights
+	for i in range(5000):
+	    weight_arrays = train_network(training_set_inputs, training_set_outputs, network_shape, weight_arrays)
+	return weight_arrays
+
+
 def train_network(input, output, network_shape, network_weights):
     '''
     Given an untrained network, inputs and expected outputs, train the network
@@ -60,9 +90,11 @@ def train_network(input, output, network_shape, network_weights):
         current_input = current_output
 
     #This will be in the reverse order
-    #Deltas will contain the error of the expected output and our predicted output
+    #Deltas will contain the error along with a few other terms which we come across
+    # due to how we formulate gradient descent of the neural network
     deltas = []
 
+    #We get these deltas according to the formula for gradient descent
     final_error = output - outputs[len(outputs)-1]
     final_delta = final_error * sigmoid_derivative(outputs[len(outputs)-1])
     deltas.append(final_delta)
@@ -90,6 +122,7 @@ def train_network(input, output, network_shape, network_weights):
             input_used = outputs[cur_weight_idx - 1]
 
         #The weights of layer i are changed based on the input to layer i (or the output of layer i-1) and the delta of layer i
+        #This is again due to the formulation of gradient descent
         network_weights[cur_weight_idx] += np.dot(delta, input_used.T)
         cur_weight_idx -= 1
 
@@ -97,23 +130,15 @@ def train_network(input, output, network_shape, network_weights):
     return network_weights
 
 
+
 #Sample training set
 training_set_inputs = np.array([[0, 0, 1, 1], [1, 1, 1, 1], [1, 0, 1, 1], [0, 1, 1, 1]]).T
 training_set_outputs = np.array([[0, 1, 1, 0]])
 
 #Let us model a 4,3,2,1 network
-weight_arrays = []
 network_shape = [4, 3, 2, 1]
-for i in range(0, 3):
-    cur_idx = i
-    next_idx = i + 1
-    #Rows correspond to next set of nodes
-    #Columns correspond to current set of nodes
-    weight_array = 2*np.random.rand(network_shape[next_idx], network_shape[cur_idx]) - 1
-    weight_arrays.append(weight_array)
 
-#Train the network multiple times to make it more accurate
-for i in range(1000):
-    weight_arrays = train_network(training_set_inputs, training_set_outputs, network_shape, weight_arrays)
+weight_arrays_initial = generate_network(network_shape)
+weight_arrays_trained = train_network_main(training_set_inputs, training_set_outputs, network_shape, weight_arrays_initial)
 
-run_network(training_set_inputs, network_shape, weight_arrays)
+run_network(training_set_inputs, network_shape, weight_arrays_trained)
