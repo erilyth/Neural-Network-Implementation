@@ -17,13 +17,19 @@ import numpy as np
 np.random.seed(1)
 
 def sigmoid(x):
+    '''Keeps the output in the range of -1 to 1 with a smooth transition'''
     return 1 / (1 + np.exp(-x))
 
 def sigmoid_derivative(x):
+    '''Derivative of the sigmoid function'''
     return x * (1 - x)
 
 def run_network(input, network_shape, network_weights):
-    
+    '''
+    Given a trained network and the input(s), predict the possible output
+    '''
+    #Rows in the weight matrix correspond to nodes of the next layer 
+    #whereas columns correspond to nodes of the previous layer
     #print network_weights
     current_input = input
     outputs = []
@@ -37,10 +43,14 @@ def run_network(input, network_shape, network_weights):
     print current_output
 
 
+#For contributions of weights in backward propogation we use transpose instead of inverse
 def train_network(input, output, network_shape, network_weights):
-    
+    '''
+    Given an untrained network, inputs and expected outputs, train the network
+    '''
     #print network_weights
     current_input = input
+    #Our predicted outputs
     outputs = []
     for network_weight in network_weights:
         current_output_temp = np.dot(network_weight, current_input)
@@ -50,6 +60,7 @@ def train_network(input, output, network_shape, network_weights):
         current_input = current_output
 
     #This will be in the reverse order
+    #Deltas will contain the error of the expected output and our predicted output
     deltas = []
 
     final_error = output - outputs[len(outputs)-1]
@@ -59,9 +70,9 @@ def train_network(input, output, network_shape, network_weights):
     cur_delta = final_delta
     back_idx = len(outputs) - 2
 
-    #Using the output of a layer that we get after multiplying with a weight matrix, for modifying that weight matrix
+    #Delta for layer i requires the weight matrix, delta of layer i+1 and expected output of layer i
+    #Going backwards (Backprop)
     for network_weight in network_weights[::-1][:-1]:
-        #Going backwards (Backprop)
         next_error = np.dot(network_weight.T, cur_delta)
         next_delta = next_error * sigmoid_derivative(outputs[back_idx])
         deltas.append(next_delta)
@@ -70,6 +81,7 @@ def train_network(input, output, network_shape, network_weights):
 
     cur_weight_idx = len(network_weights) - 1
 
+    #These deltas will be in the reverse order, so we move backwards through the layers
     for delta in deltas:
         input_used = None
         if cur_weight_idx - 1 < 0:
@@ -77,6 +89,7 @@ def train_network(input, output, network_shape, network_weights):
         else:
             input_used = outputs[cur_weight_idx - 1]
 
+        #The weights of layer i are changed based on the input to layer i (or the output of layer i-1) and the delta of layer i
         network_weights[cur_weight_idx] += np.dot(delta, input_used.T)
         cur_weight_idx -= 1
 
@@ -99,6 +112,7 @@ for i in range(0, 3):
     weight_array = 2*np.random.rand(network_shape[next_idx], network_shape[cur_idx]) - 1
     weight_arrays.append(weight_array)
 
+#Train the network multiple times to make it more accurate
 for i in range(1000):
     weight_arrays = train_network(training_set_inputs, training_set_outputs, network_shape, weight_arrays)
 
