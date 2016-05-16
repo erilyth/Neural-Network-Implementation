@@ -70,7 +70,7 @@ def train_network_main(input, output, network_shape, network_weights):
 	#Train the network multiple times to make it more accurate
 	weight_arrays = network_weights
 	for i in range(5000):
-	    weight_arrays = train_network(training_set_inputs, training_set_outputs, network_shape, weight_arrays)
+	    weight_arrays = train_network(input, output, network_shape, weight_arrays)
 	return weight_arrays
 
 
@@ -128,17 +128,3 @@ def train_network(input, output, network_shape, network_weights):
 
     #print network_weights
     return network_weights
-
-
-
-#Sample training set
-training_set_inputs = np.array([[0, 0, 1, 1], [1, 1, 1, 1], [1, 0, 1, 1], [0, 1, 1, 1]]).T
-training_set_outputs = np.array([[0, 1, 1, 0]])
-
-#Let us model a 4,3,2,1 network
-network_shape = [4, 3, 2, 1]
-
-weight_arrays_initial = generate_network(network_shape)
-weight_arrays_trained = train_network_main(training_set_inputs, training_set_outputs, network_shape, weight_arrays_initial)
-
-run_network(training_set_inputs, network_shape, weight_arrays_trained)

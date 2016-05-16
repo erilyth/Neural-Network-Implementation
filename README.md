@@ -2,6 +2,12 @@
 
 ### Usage
 
+* Import numpy and required functions from neuralnet.py
+```python
+	import numpy as np
+	from neuralnet import generate_network, train_network_main, run_network
+```
+
 * With a set of training inputs and outputs
 ```python
     inputs = np.array([[0, 0, 1, 1], 
@@ -16,7 +22,7 @@
 ```
 * Generate initial weights and train the network
 ```python
-    weights = generate_network(network_shape)
+    weights = generate_network(shape)
     weights = train_network_main(inputs, outputs, shape, weights)
 ```
 * Consider a test input and run the trained network, the output will be printed on the screen
