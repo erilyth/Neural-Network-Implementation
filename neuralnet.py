@@ -60,21 +60,21 @@ def run_network(input, network_shape, network_weights):
         outputs.append(current_output)
         current_input = current_output
 
-    print current_output
+    return current_output.T
 
 
-def train_network_main(input, output, network_shape, network_weights):
+def train_network_main(input, output, training_rate, network_shape, network_weights):
 	'''
 	Take untrained weights and return trained weights for the neural network
 	'''
 	#Train the network multiple times to make it more accurate
 	weight_arrays = network_weights
-	for i in range(5000):
-	    weight_arrays = train_network(input, output, network_shape, weight_arrays)
+	for i in range(10000):
+	    weight_arrays = train_network(input, output, training_rate, network_shape, weight_arrays)
 	return weight_arrays
 
 
-def train_network(input, output, network_shape, network_weights):
+def train_network(input, output, training_rate, network_shape, network_weights):
     '''
     Given an untrained network, inputs and expected outputs, train the network
     '''
@@ -123,7 +123,7 @@ def train_network(input, output, network_shape, network_weights):
 
         #The weights of layer i are changed based on the input to layer i (or the output of layer i-1) and the delta of layer i
         #This is again due to the formulation of gradient descent
-        network_weights[cur_weight_idx] += np.dot(delta, input_used.T)
+        network_weights[cur_weight_idx] += training_rate*np.dot(delta, input_used.T)
         cur_weight_idx -= 1
 
     #print network_weights

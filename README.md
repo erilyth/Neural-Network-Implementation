@@ -14,7 +14,9 @@
                        [1, 1, 1, 1], 
                        [1, 0, 1, 1]]).T
 
-    outputs = np.array([[0, 1, 1]])
+    outputs = np.array([[0],
+                        [1],
+                        [1]]).T
 ```
 * Define the shape of the network (The number of nodes in each layer). 
 ```python
@@ -22,14 +24,18 @@
 ```
 * Generate initial weights and train the network
 ```python
+    training_rate = 0.5
     weights = generate_network(shape)
-    weights = train_network_main(inputs, outputs, shape, weights)
+    weights = train_network_main(inputs, outputs, training_rate, shape, weights)
 ```
-* Consider a test input and run the trained network, the output will be printed on the screen
+* Consider a test input and run the trained network
 ```python
     test_input = np.array([[0, 0, 1, 1]]).T
-    run_network(test_input, shape, weights)
+    test_output = run_network(test_input, shape, weights)
+    print test_output
 ```
+
+* Always ensure the inputs and the outputs lie in the range of [0, 1]
 
 ### Methods
 
