@@ -37,7 +37,14 @@
 
 * Always ensure the inputs and the outputs lie in the range of [0, 1]
 
-### Methods
+
+### Examples
+
+* Number recognition from 8x8 images is included in the usage_examples
+* A simple test code for testing the neural network is included in the usage_examples
+
+
+### Methods used in designing the neural net
 
 * sigmoid - Runs the sigmoid function on a given matrix and returns a matrix of the same dimensions
 * sigmoid_derivative - Runs the sigmoid derivative function on a given matrix and returns a matrix of the same dimensions
@@ -45,6 +52,7 @@
 * run_network - Gives us the predicted output for a certain set of inputs
 * train_network_main - Runs the train_network method multiple times to improve our weights of the neural network
 * train_network - Given a set of inputs and expected outputs, runs our network as of now and calculates the error between the predicted output and the expected output. This error is then used in the gradient descent approach and the weights of the network are adjusted accordingly such that the cost (error) is minimized. (We go down the slope so the cost is minimized, so if slope is +ve we go in the -ve direction and vice versa)
+
 
 ###### Tutorial
 
